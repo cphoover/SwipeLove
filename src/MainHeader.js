@@ -3,8 +3,9 @@ import { AppHeader } from "./Layout";
 import GearIcon from "./icons/gear";
 import NotificationsIcon from "./icons/notification";
 import styled from "styled-components";
-import { useRouter } from "./Router";
-import { useCompletions } from "./Providers/CompletionsProvider";
+import BackIcon from "./icons/back";
+// import { useRouter } from "./Router";
+// import { useCompletions } from "./Providers/CompletionsProvider";
 
 const IconWrapper = styled.div`
   position: relative;
@@ -37,33 +38,33 @@ const UnreadCount = styled.div`
 `;
 
 const MainHeader = ({ title = "barcrawl" }) => {
-  const { isCurrentPage, goto } = useRouter();
-  const { unreadCountValue } = useCompletions();
+  // const { isCurrentPage, goto } = useRouter();
+  // const { unreadCountValue } = useCompletions();
   
   return (
     <AppHeader
       title={title}
       leftIcon={
         <MenuButton
-          isActive={isCurrentPage("settings")}
+          // isActive={isCurrentPage("settings")}
           onclick={() => {
-            goto("settings");
+            // goto("settings");
           }}
         >
-          <GearIcon />
+          <BackIcon />
         </MenuButton>
       }
       rightIcon={
         <MenuButton
-          isActive={isCurrentPage("notifications")}
+          // isActive={isCurrentPage("notifications")}
           onclick={() => {
-            goto("notifications");
+            // goto("notifications");
           }}
         >
           <NotificationsIcon />
-          {unreadCountValue > 0 && (
+          {/* {unreadCountValue > 0 && (
             <UnreadCount>{unreadCountValue}</UnreadCount>
-          )}
+          )} */}
         </MenuButton>
       }
     />

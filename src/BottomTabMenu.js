@@ -3,8 +3,12 @@ import styled from "styled-components";
 import MapIcon from "./icons/map";
 import CameraIcon from "./icons/camera";
 import TrophyIcon from "./icons/trophy";
-import { useRouter } from "./Router";
+// import { useRouter } from "./Router";
 import PlayerIcon from "./icons/player";
+import HomeButton from "./HomeButton";
+import NotificationsButton from "./NotificationsButton";
+import SettingsButton from "./Screens/SettingsButton";
+import ChatButton from "./ChatButton";
 
 const TabBarContainer = styled.div`
   display: flex;
@@ -13,9 +17,10 @@ const TabBarContainer = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: white;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-  padding: 10px 0;
+  height: 60px;
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  box-sizing: border-box;
 `;
 
 const TabItem = styled.div`
@@ -46,7 +51,9 @@ const TabLabel = styled.span`
 `;
 
 function BottomTabMenu() {
-  const { isCurrentPage, goto } = useRouter();
+  // const { isCurrentPage, goto } = useRouter();
+  const isCurrentPage = () => false;
+  const goto = () => {};
   return (
     <TabBarContainer>
       <TabItem
@@ -56,29 +63,31 @@ function BottomTabMenu() {
         }}
       >
         <IconContainer>
-          <MapIcon />
+          <HomeButton />
         </IconContainer>
-        <TabLabel>Map</TabLabel>
+        {/* <TabLabel>Map</TabLabel> */}
       </TabItem>
-      <TabItem className={isCurrentPage("leaderboard") ? "active" : ""}
+      <TabItem
+        className={isCurrentPage("leaderboard") ? "active" : ""}
         onClick={() => {
           goto("leaderboard");
         }}
       >
         <IconContainer>
-          <PlayerIcon />
+          <SettingsButton />
         </IconContainer>
-        <TabLabel>Players</TabLabel>
+        {/* <TabLabel>Players</TabLabel> */}
       </TabItem>
-      <TabItem className={isCurrentPage("photos") ? "active" : ""}
+      <TabItem
+        className={isCurrentPage("photos") ? "active" : ""}
         onClick={() => {
           goto("photos");
         }}
       >
         <IconContainer>
-          <CameraIcon />
+         <ChatButton />
         </IconContainer>
-        <TabLabel>Photos</TabLabel>
+        {/* <TabLabel>Photos</TabLabel> */}
       </TabItem>
     </TabBarContainer>
   );

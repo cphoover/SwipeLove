@@ -1,151 +1,112 @@
 import React, { useEffect, useMemo } from "react";
 import styled from "styled-components";
-import CameraIcon from "../icons/camera";
-import { Container, Content, Terms, AppHeader } from "../Layout";
+import { Container, Content } from "../Layout";
 import MainHeader from "../MainHeader";
 import BottomTabMenu from "../BottomTabMenu";
-import Legal from "../Legal";
-import { getNotification, notificationsMap } from "../objectives";
-import { useCompletions } from "../Providers/CompletionsProvider";
-import { useMyUser } from "../Providers/MyUserProvider";
-import AirHornIcon from "../icons/airhorn";
-import { useOtherUsers } from "../Providers/OtherUsersProvider";
-import { debug, formatLastUpdatedTime } from "../utils";
+import PersonAvatar from "../PersonAvatar";
+import RightArrowIcon from "../icons/right-arrow";
+
+
 
 const NotificationsList = styled.ul`
   list-style-type: none;
   padding: 0;
+  /* margin-top: 32px; */
 `;
 
-const NotificationLine = styled.li`
-  & svg {
-    vertical-align: middle;
-    margin-right: 10px;
-    position: relative;
-    top: -2px;
-  }
-  color: #121212;
-  font-size: 14px;
-  font-family: "Montserrat";
-  font-weight: 500;
-  // height: 48px;
-
-  background-color: #ffffff;
+const NotificationListItem = styled.li`
+  display: flex;
+  align-items: center;
   padding: 16px;
-  margin-bottom: 14px;
+  /* height: 109px; */
+  background-color: #ffffff;
   border-radius: 24px;
-  box-shadow: 0px 2px 10px rgba(3, 3, 3, 0.1);
-  &.active {
-    background-color: black;
-    color: white;
-    box-shadow: none;
-    & svg {
-      fill: white;
-    }
-  }
+  box-shadow: 2px 0px 10px rgba(3, 3, 3, 0.1);
+  margin-bottom: 16px;
 `;
 
-const getIcon = (type, objectiveType) => {
-  switch (type) {
-    case "objective-complete":
-      switch (objectiveType) {
-        case "bar":
-          return <CameraIcon />;
-        case "shot-malort":
-          return <CameraIcon />;
-        case "shot-tequila":
-          return <CameraIcon />;
-        case "doppleganger-photo":
-          return <CameraIcon />;
-        default:
-          return null;
-      }
-    default:
-      return null;
-  }
-};
-
-const notifications = [
-  {
-    type: "objective-complete",
-    objectiveType: "bar",
-    message: "John just visited 5 bars in a row!",
-    isMyAction: true,
-  },
-  {
-    type: "objective-complete",
-    objectiveType: "shot-malort",
-    message: "Jane just took a shot of Malort!",
-  },
-  {
-    type: "objective-complete",
-    objectiveType: "shot-tequila",
-    message: "John just took a shot of Tequila!",
-    isMyAction: true,
-  },
-  {
-    type: "objective-complete",
-    objectiveType: "doppleganger-photo",
-    message: "Jill just took a photo with her doppleganger!",
-  },
-];
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
+const NotificationDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+`;
+const NotificationMsg = styled.div`
+  font-size: 18px;
+  font-family: "Open Sans";
+  font-weight: 600;
+  line-height: 28px;
 `;
 
-const NotificationsPage = () => {
-  const { completions, updateLastVisited } = useCompletions();
+const NotificationText = styled.div`
+  font-size: 14px;
+  font-family: "Open Sans";
+  font-weight: 300;
+  line-height: 20px;
+`;
 
-  // debug("completions", completions);
-  // const { updateLastVisited } = useCompletions();
-  const { userId } = useMyUser();
-
-  const reversedOrder = useMemo(() => {
-    return [...completions].reverse();
-  }, [completions]);
-
-
-
-  useEffect(() => {
-    updateLastVisited();
-  }, []);
-
+const GoButton = styled.div`
+  margin-left: auto;
+`;
+const NotificationsScreen = () => {
   return (
     <>
       <Container>
         <MainHeader title="Notifications" />
         <Content>
           <NotificationsList>
-            {reversedOrder.map((completion) => {
-              debug(completion.user_id);
-
-              return (
-                <>
-                  {getNotification(
-                    completion.completion_id,
-                    completion.user.username
-                  ) && (
-                    <NotificationLine
-                      key={completion.id}
-                      className={completion.user_id === userId ? "active" : ""}
-                    >
-                      <AirHornIcon />
-                      {formatLastUpdatedTime(completion)} -{" "}
-                      {getNotification(
-                        completion.completion_id,
-                        completion.user.username
-                      )}
-                      &nbsp; 💩
-                    </NotificationLine>
-                  )}
-                </>
-              );
-            })}
+            <NotificationListItem>
+              <PersonAvatar
+                small
+                photoUrl="/images/profile-photos/person1.png"
+              />
+              <NotificationDetails>
+                <NotificationMsg>Sarah matched with you</NotificationMsg>
+                <NotificationText>Start chatting now!</NotificationText>
+              </NotificationDetails>
+              <GoButton>
+                <RightArrowIcon />
+              </GoButton>
+            </NotificationListItem>
+            <NotificationListItem>
+              <PersonAvatar
+                small
+                photoUrl="/images/profile-photos/person4.jpeg"
+              />
+              <NotificationDetails>
+                <NotificationMsg>Alex messaged you!</NotificationMsg>
+                <NotificationText>Let's grab coffee sometime?</NotificationText>
+              </NotificationDetails>
+              <GoButton>
+                <RightArrowIcon />
+              </GoButton>
+            </NotificationListItem>
+            <NotificationListItem>
+              <PersonAvatar
+                small
+                photoUrl="/images/profile-photos/person3.jpeg"
+              />
+              <NotificationDetails>
+                <NotificationMsg>Jen matched with you</NotificationMsg>
+                <NotificationText>Want to grab dinner?</NotificationText>
+              </NotificationDetails>
+              <GoButton>
+                <RightArrowIcon />
+              </GoButton>
+            </NotificationListItem>
+            <NotificationListItem>
+              <PersonAvatar
+                small
+                photoUrl="/images/profile-photos/person2.jpeg"
+              />
+              <NotificationDetails>
+                <NotificationMsg>April Matched with you</NotificationMsg>
+                <NotificationText>Start chatting now!</NotificationText>
+              </NotificationDetails>
+              <GoButton>
+                <RightArrowIcon />
+              </GoButton>
+            </NotificationListItem>
           </NotificationsList>
-          <Legal />
         </Content>
       </Container>
       <BottomTabMenu />
@@ -153,4 +114,4 @@ const NotificationsPage = () => {
   );
 };
 
-export default NotificationsPage;
+export default NotificationsScreen;
