@@ -13,15 +13,31 @@ import UpdatePhotosScreen from "./Screens/UpdatePhotosScreen";
 import ProfileSettingsScreen from "./Screens/ProfileSettingsScreen";
 import ConversationScreen from "./Screens/ConversationScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
+import Router from "./Router";
+import { MyUserProvider } from "./Providers/MyUserProvider";
+import { LoadingBarProvider } from "./Providers/LoadingBarProvider";
+import GlobalLoadingBar from "./LoadingBar";
+import { MyPhotosProvider } from "./Providers/MyPhotosProvider";
 
 const AppWrapper = ({ children }) => {
-  return <ProfileScreen />;
+  return (
+    <LoadingBarProvider>
+      <MyUserProvider>
+        <MyUserProvider>
+          <MyPhotosProvider>
+            <Router />
+          </MyPhotosProvider>
+        </MyUserProvider>
+      </MyUserProvider>
+    </LoadingBarProvider>
+  );
+  // return <ProfileScreen />;
   // return <ConversationScreen />;
   // return <UpdatePhotosScreen />;
   // return <NotificationsScreen />;
   // return <ChatsScreen />;
-  return <ProfileSettingsScreen />;
-  return <HomeScreen />;
+  // return <ProfileSettingsScreen />;
+  // return <HomeScreen />;
   // return (
   //   <>
   //     <MyUserProvider>

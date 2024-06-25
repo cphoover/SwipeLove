@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { Button } from './Layout'
-;
+import { Button } from "./Layout";
 import KissHeartAnimation from "./KissHeartAnimation";
+import { LYFT_PINK } from "./themes/colors";
 
 const MatchOverlayBack = styled.div`
   position: fixed;
@@ -32,7 +32,7 @@ const MatchOverlayPhoto = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  border: 4px solid #2ecc71;
+  border: 4px solid ${LYFT_PINK};
   box-sizing: border-box;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -72,7 +72,7 @@ const ButtonRow = styled.div`
   display: flex;
   gap: 16px;
 `;
-const Match = () => (
+const Match = ({ onClose, onSendMsg }) => (
   <>
     <MatchOverlayBack>
       <MatchOverlay>
@@ -82,8 +82,8 @@ const Match = () => (
         <MatchOverlayTitle>It's a Match!</MatchOverlayTitle>
         <MatchOverlayText>You and Alex both liked each other.</MatchOverlayText>
         <ButtonRow>
-          <Button>Keep Swiping</Button>
-          <Button>Send Message</Button>
+          <Button onClick={onClose}>Keep Swiping</Button>
+          <Button onClick={onSendMsg}>Send Message</Button>
         </ButtonRow>
       </MatchOverlay>
     </MatchOverlayBack>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Button, Container, Content } from "../Layout";
 import MainHeader from "../MainHeader";
 import BottomTabMenu from "../BottomTabMenu";
+import { LYFT_PINK } from "../themes/colors";
 
 const ChatWrapper = styled.div`
   display: flex;
@@ -45,7 +46,7 @@ const Bubble = styled.div`
   max-width: 70%;
   padding: 12px;
   border-radius: 16px;
-  background-color: ${(props) => (props.isUser ? "#007bff" : "#e5e5ea")};
+  background-color: ${(props) => (props.isUser ? LYFT_PINK : "#e5e5ea")};
   color: ${(props) => (props.isUser ? "#fff" : "#000")};
 `;
 
@@ -159,14 +160,13 @@ const ConversationScreen = () => {
   };    
 
   useEffect(() => {
-    console.log("scroll to bottom");
     scrollToBottom();
   }, [messages]);
 
   return (
     <>
       <Container>
-        <MainHeader title="Chat" />
+        <MainHeader title="Chat" back />
         <Content>
           <ChatWrapper>
             <MessageList ref={messageListRef}>

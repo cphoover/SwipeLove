@@ -37,9 +37,9 @@ const defaultProps = {
   IconComponent,
 };
 
-const LikeButton = (props) => {
+const LikeButton = ({onClick, ...props}) => {
   return (
-    <button style={styles.Button}>
+    <button onClick={onClick} style={styles.Button}>
       {
         props.IconComponent 
           ? <props.IconComponent style={styles.Icon} /> 

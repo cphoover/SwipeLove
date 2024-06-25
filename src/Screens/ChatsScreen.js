@@ -4,6 +4,7 @@ import { Container, Content } from "../Layout";
 import MainHeader from "../MainHeader";
 import BottomTabMenu from "../BottomTabMenu";
 import PersonAvatar from "../PersonAvatar";
+import { useRouter } from "../Router";
 
 const NotificationsList = styled.ul`
   list-style-type: none;
@@ -75,7 +76,7 @@ const ChatListItem = styled.li`
 const ChatDetails = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left:  16px;
+  padding-left: 16px;
 `;
 const ChatName = styled.div`
   font-size: 18px;
@@ -92,6 +93,7 @@ const ChatText = styled.div`
 `;
 
 const ChatsScreen = () => {
+  const { goto } = useRouter();
   return (
     <>
       <Container>
@@ -99,49 +101,49 @@ const ChatsScreen = () => {
         <Content>
           <SearchInput type="search" placeholder="Search..." />
           <ChatsList>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person1.png" />
               <ChatDetails>
                 <ChatName>Jane Doe</ChatName>
                 <ChatText>Hey, how are you?</ChatText>
               </ChatDetails>
             </ChatListItem>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person4.jpeg" />
               <ChatDetails>
                 <ChatName>Heather Braxton</ChatName>
                 <ChatText>Hey, how are you?</ChatText>
               </ChatDetails>
             </ChatListItem>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person3.jpeg" />
               <ChatDetails>
                 <ChatName>April Smith</ChatName>
                 <ChatText>Can I get your numbah?</ChatText>
               </ChatDetails>
             </ChatListItem>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person2.jpeg" />
               <ChatDetails>
                 <ChatName>Kami Kline</ChatName>
                 <ChatText>so... how was your day today?</ChatText>
               </ChatDetails>
             </ChatListItem>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person5.jpeg" />
               <ChatDetails>
                 <ChatName>Silvia Ortega</ChatName>
                 <ChatText>Are you going to that concert this weekend?</ChatText>
               </ChatDetails>
             </ChatListItem>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person6.jpeg" />
               <ChatDetails>
                 <ChatName>Margeret Greene</ChatName>
                 <ChatText>I absolutely love your Barcelona photos!</ChatText>
               </ChatDetails>
             </ChatListItem>
-            <ChatListItem>
+            <ChatListItem onClick={() => goto("conversation")}>
               <PersonAvatar photoUrl="/images/profile-photos/person7.jpeg" />
               <ChatDetails>
                 <ChatName>Kami Kline</ChatName>

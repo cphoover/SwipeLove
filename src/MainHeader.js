@@ -4,6 +4,8 @@ import GearIcon from "./icons/gear";
 import NotificationsIcon from "./icons/notification";
 import styled from "styled-components";
 import BackIcon from "./icons/back";
+import { useRouter } from "./Router";
+import { LYFT_PINK } from "./themes/colors";
 // import { useRouter } from "./Router";
 // import { useCompletions } from "./Providers/CompletionsProvider";
 
@@ -14,7 +16,7 @@ const IconWrapper = styled.div`
   }
 
   &.active svg {
-    fill: black;
+    fill: ${LYFT_PINK};
   }
 `;
 
@@ -37,10 +39,10 @@ const UnreadCount = styled.div`
   font-family: "Montserrat";
 `;
 
-const MainHeader = ({ title = "barcrawl" }) => {
-  // const { isCurrentPage, goto } = useRouter();
+const MainHeader = ({ title = "barcrawl", back }) => {
+  const { isCurrentPage, goto } = useRouter();
   // const { unreadCountValue } = useCompletions();
-  
+
   return (
     <AppHeader
       title={title}
@@ -48,7 +50,7 @@ const MainHeader = ({ title = "barcrawl" }) => {
         <MenuButton
           // isActive={isCurrentPage("settings")}
           onclick={() => {
-            // goto("settings");
+            back ? global.history.back() : goto("home");
           }}
         >
           <BackIcon />
@@ -56,9 +58,9 @@ const MainHeader = ({ title = "barcrawl" }) => {
       }
       rightIcon={
         <MenuButton
-          // isActive={isCurrentPage("notifications")}
+          isActive={isCurrentPage("notifications")}
           onclick={() => {
-            // goto("notifications");
+            goto("notifications");
           }}
         >
           <NotificationsIcon />

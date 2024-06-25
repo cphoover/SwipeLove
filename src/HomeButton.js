@@ -3,7 +3,7 @@ import React from 'react';
 const styles = {
   Icon: {
     color: '#000000',
-    fill: '#000000',
+    // fill: '#000000',
     fontSize: '18px',
     top: '725px',
     left: '78px',

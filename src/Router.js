@@ -1,28 +1,17 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  Suspense,
-} from "react";
-import LeaderboardScreen from "./Screens/LeaderboardScreen";
-import MainMapScreen from "./Screens/MainMapScreen";
+import React, { createContext, useContext, useState, useEffect } from "react";
 // import MainMapScreen from "./Screens/MainMapScreenUseReactMarkers";
 import NotificationsScreen from "./Screens/NotificationsScreen";
-import ObjectivesScreen from "./Screens/ObjectivesScreen";
-import RecordGoalScreen from "./Screens/RecordGoalScreen";
-import RegisterScreen from "./Screens/RegisterScreen";
 
-import SettingsScreen from "./Screens/SettingsScreen";
 import RedirectUnregistered from "./RedirectUnregistered";
-import { MapFiltersProvider } from "./Providers/MapFiltersProvider";
-import { OtherUsersProvider } from "./Providers/OtherUsersProvider";
-import { OnlineUsersProvider } from "./Providers/OnlineUsersProvider";
-import { LocationProvider } from "./Providers/LocationProvider";
-import { lazy } from "react";
-import LogItScreen from "./Screens/LogItScreen";
-
-const PhotosScreen = lazy(() => import("./Screens/PhotosScreen"));
+import HomeScreen from "./Screens/HomeScreen";
+import ChatsScreen from "./Screens/ChatsScreen";
+import ConversationScreen from "./Screens/ConversationScreen";
+import ProfileScreen from "./Screens/ProfileScreen";
+import UpdatePhotosScreen from "./Screens/UpdatePhotosScreen";
+import ProfileSettingsScreen from "./Screens/ProfileSettingsScreen";
+import GlobalLoadingBar from "./LoadingBar";
+import { useLoadingBar } from "./Providers/LoadingBarProvider";
+import AdminScreen from "./Screens/AdminScreen";
 
 // Create a context
 const RouterContext = createContext();
@@ -55,30 +44,24 @@ function Router() {
   // Function to render the component based on the current page
   const renderRoute = () => {
     switch (currentPage) {
-      case "register":
-        return <RegisterScreen />;
-      case "leaderboard":
-        return <LeaderboardScreen />;
-      case "map":
-        return <MainMapScreen />;
-      case "log-it":
-        return <LogItScreen />;
+      case "home":
+        return <HomeScreen />;
+      case "chats":
+        return <ChatsScreen />;
+      case "admin":
+        return <AdminScreen />;
+      case "conversation":
+        return <ConversationScreen />;
+      case "settings":
+        return <ProfileSettingsScreen />;
+      case "update-photos":
+        return <UpdatePhotosScreen />;
+      case "profile":
+        return <ProfileScreen />;
       case "notifications":
         return <NotificationsScreen />;
-      case "objectives":
-        return <ObjectivesScreen />;
-      case "record":
-        return <RecordGoalScreen />;
-      case "photos":
-        return (
-          <Suspense fallback={<div>Loading...</div>}>
-            <PhotosScreen />
-          </Suspense>
-        );
-      case "settings":
-        return <SettingsScreen />;
       default:
-        return <MainMapScreen />; // Default route or add a NotFound screen if preferred
+        return <HomeScreen />; // Default route or add a NotFound screen if preferred
     }
   };
 
@@ -91,19 +74,12 @@ function Router() {
   return (
     <RouterContext.Provider value={contextValue}>
       <RedirectUnregistered>{renderRoute()}</RedirectUnregistered>
+
+      <GlobalLoadingBar />
+      {/* {renderRoute()} */}
     </RouterContext.Provider>
   );
 }
-
-const ProvidersHOC = ({ children }) => (
-  <MapFiltersProvider>
-    <OtherUsersProvider>
-      <OnlineUsersProvider>
-        <LocationProvider>{children}</LocationProvider>
-      </OnlineUsersProvider>
-    </OtherUsersProvider>
-  </MapFiltersProvider>
-);
 
 // Export the context for use in other components
 export const useRouter = () => useContext(RouterContext);

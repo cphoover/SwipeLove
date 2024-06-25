@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { LYFT_PINK } from "./themes/colors";
 
 export const Container = styled.div`
   display: flex;
@@ -15,7 +16,7 @@ export const HeaderSpacer = styled.div`
 export const Header = styled.header`
   position: fixed;
   width: 100%;
-  height: 70px;
+  height: 68px;
   background-color: #ffffff;
   background-color: #ffffff;
   box-shadow: 2px -2px 10px rgba(3, 3, 3, 0.1);
@@ -106,10 +107,10 @@ export const Button = styled.button`
   display: block;
   padding: 0 15px;
   height: 36px;
-  border: 1px solid #121212;
+  border: 1px solid ${LYFT_PINK};
   border-radius: 24px;
   /* existing styles */
-  background-color: ${(props) => (props.disabled ? "#ddd" : "black")};
+  background-color: ${(props) => (props.disabled ? "#ddd" : LYFT_PINK)};
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   color: ${(props) => (props.disabled ? "#666666" : "white")};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};

@@ -9,6 +9,8 @@ import HomeButton from "./HomeButton";
 import NotificationsButton from "./NotificationsButton";
 import SettingsButton from "./Screens/SettingsButton";
 import ChatButton from "./ChatButton";
+import { useRouter } from "./Router";
+import { LYFT_PINK } from "./themes/colors";
 
 const TabBarContainer = styled.div`
   display: flex;
@@ -31,13 +33,13 @@ const TabItem = styled.div`
   flex-grow: 1;
   color: #7f7f7f;
   & svg {
-    fill: #7f7f7f;
+    fill: rgb(211, 211, 211);
   }
 
   &.active {
     color: black;
     svg {
-      fill: black;
+      fill: ${LYFT_PINK};
     }
   }
 `;
@@ -51,15 +53,14 @@ const TabLabel = styled.span`
 `;
 
 function BottomTabMenu() {
-  // const { isCurrentPage, goto } = useRouter();
-  const isCurrentPage = () => false;
-  const goto = () => {};
+  const { isCurrentPage, goto } = useRouter();
+
   return (
     <TabBarContainer>
       <TabItem
-        className={isCurrentPage("map") ? "active" : ""}
+        className={isCurrentPage("home") ? "active" : ""}
         onClick={() => {
-          goto("map");
+          goto("home");
         }}
       >
         <IconContainer>
@@ -68,9 +69,9 @@ function BottomTabMenu() {
         {/* <TabLabel>Map</TabLabel> */}
       </TabItem>
       <TabItem
-        className={isCurrentPage("leaderboard") ? "active" : ""}
+        className={isCurrentPage("settings") ? "active" : ""}
         onClick={() => {
-          goto("leaderboard");
+          goto("settings");
         }}
       >
         <IconContainer>
@@ -79,13 +80,17 @@ function BottomTabMenu() {
         {/* <TabLabel>Players</TabLabel> */}
       </TabItem>
       <TabItem
-        className={isCurrentPage("photos") ? "active" : ""}
+        className={
+          isCurrentPage("chats") || isCurrentPage("conversation")
+            ? "active"
+            : ""
+        }
         onClick={() => {
-          goto("photos");
+          goto("chats");
         }}
       >
         <IconContainer>
-         <ChatButton />
+          <ChatButton />
         </IconContainer>
         {/* <TabLabel>Photos</TabLabel> */}
       </TabItem>

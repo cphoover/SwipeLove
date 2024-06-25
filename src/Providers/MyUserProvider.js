@@ -1,52 +1,80 @@
-import { useEffect, useState, useContext, createContext } from "react";
-import { debug, getUserId } from "../utils.js";
-import { supabase } from "../db.js";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "../db";
+import { getUserId } from "../utils";
+import { useLoadingBar } from "./LoadingBarProvider";
 
-const MyUserContext = createContext(null);
-
-export const useMyUser = () => {
-  const context = useContext(MyUserContext);
-  if (!context) {
-    throw new Error("useMyUser must be used within a MyUserProvider");
-  }
-  return context;
-};
+const UserDataContext = createContext();
 
 export const MyUserProvider = ({ children }) => {
-  const [userLoaded, setUserLoaded] = useState(false);
-  const [myDetails, setMyDetails] = useState(null);
-  const userId = getUserId();
+  const [userData, setUserData] = useState(null);
+  const [myUserDataLoaded, setMyUserDataLoaded] = useState(false);
+  const [myUserDataIsLoading, setMyUserDataIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const hookRes = useLoadingBar();
+  // const { initializeLoadingBar, finishLoadingBar } = hookRes;
 
+  // const initializeLoadingBar = () => {};
+  // const finishLoadingBar = () => {};
   useEffect(() => {
-    const refreshMyUserData = async () => {
+    const fetchUserData = async () => {
+      // initializeLoadingBar("fetchMyUserData");
+      setMyUserDataIsLoading(true);
+      const userId = getUserId(); // Replace with actual user_id fetching logic
       const { data, error } = await supabase
-        .from("users")
+        .from("user_profiles")
         .select("*")
         .eq("user_id", userId)
         .single();
 
       if (error) {
-        console.log("~~~a");
-        setUserLoaded(true);
-        console.error("Error fetching user data:", error);
+        console.error(error);
+        setError(error);
       } else {
-        console.log("~~~b");
-        debug("refreshMyUserData data", data);
-        setMyDetails(data);
-        setUserLoaded(true);
+        setUserData(data);
       }
+      setMyUserDataIsLoading(false);
+      setMyUserDataLoaded(true);
+      // finishLoadingBar("fetchMyUserData");
     };
 
-    refreshMyUserData();
-  }, [userId]);
+    fetchUserData();
+  }, []);
 
-  const iAmRegistered = myDetails?.registered === true;
+  const saveUserData = async (updatedData) => {
+    const { data, error } = await supabase.from("user_profiles").upsert([
+      {
+        user_id: getUserId(), // Replace with actual user_id
+        updated_at: new Date().toISOString(),
+        ...updatedData,
+      },
+    ]).select('*');
+
+    if (error) {
+      console.error(error);
+      setError(error);
+    } else {
+      setUserData(data[0]);
+    }
+  };
+
+  const iAmRegistered = Boolean(userData?.first_name);
 
   return (
-    <MyUserContext.Provider
-      value={{ userId, userLoaded, myDetails, iAmRegistered, setMyDetails }}
+    <UserDataContext.Provider
+      value={{
+        userData,
+        iAmRegistered,
+        myUserDataLoaded,
+        myUserDataIsLoading,
+        saveUserData,
+        error,
+      }}
     >
       {children}
-    </MyUserContext.Provider>
+    </UserDataContext.Provider>
   );
+};
+
+export const useMyUser = () => {
+  return useContext(UserDataContext);
 };

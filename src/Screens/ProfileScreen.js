@@ -9,6 +9,7 @@ import LikeButton from "../LikeButton";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import { useRouter } from "../Router";
 
 const ProfilePhoto = styled.div`
   top: 0px;
@@ -143,6 +144,7 @@ const profilePhotos = [
 ];
 const ProfileScreen = () => {
   const [isViewerOpen, setIsViewerOpen] = React.useState(false);
+  const { goto }= useRouter();
   return (
     <>
       <Container>
@@ -160,7 +162,11 @@ const ProfileScreen = () => {
               alt="Profile"
             />
           </ProfilePhoto>
-          <BackButton>
+          <BackButton
+            onClick={() => {
+              goto("home");
+            }}
+          >
             <BackIcon />
           </BackButton>
           <InteractionContainer>
