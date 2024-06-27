@@ -4,10 +4,12 @@ import MainHeader from "../MainHeader";
 import BottomTabMenu from "../BottomTabMenu";
 import { useRouter } from "../Router";
 import { supabase } from "../db"; // Make sure to import your Supabase client
+import { useMatches } from "../Providers/MatchesProvider";
 
 const AdminScreen = () => {
   const { goto } = useRouter();
   const [users, setUsers] = useState([]);
+  // const { setLatestMatchEpoch } = useMatches();
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
@@ -73,71 +75,92 @@ const AdminScreen = () => {
   };
 
   const deleteUserProfile = async () => {
-    const { error } = await supabase
-      .from("user_profiles")
-      .delete()
-      .eq("user_id", selectedUser.user_id);
+    if (window.confirm(`Are you sure you want to delete the profile of ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`)) {
+      const { error: interactionsError } = await supabase
+        .from("interactions")
+        .delete()
+        .or(`user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`);
 
-    if (error) {
-      console.error("Error deleting user profile:", error);
-    } else {
-      setUsers(users.filter((user) => user.user_id !== selectedUser.user_id));
-      setSelectedUser(null);
-      alert("User profile deleted successfully.");
+      if (interactionsError) {
+        console.error("Error deleting interactions:", interactionsError);
+        return;
+      }
+
+      const { error: matchesError } = await supabase
+        .from("matches")
+        .delete()
+        .or(`user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`);
+
+      if (matchesError) {
+        console.error("Error deleting matches:", matchesError);
+        return;
+      }
+
+      const { error: userProfileError } = await supabase
+        .from("user_profiles")
+        .delete()
+        .eq("user_id", selectedUser.user_id);
+
+      if (userProfileError) {
+        console.error("Error deleting user profile:", userProfileError);
+      } else {
+        setUsers(users.filter((user) => user.user_id !== selectedUser.user_id));
+        setSelectedUser(null);
+        alert("User profile deleted successfully.");
+      }
     }
   };
 
   const resetInteractions = async () => {
-    const { error: interactionsError } = await supabase
-      .from("interactions")
-      .delete()
-      .or(
-        `user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`
-      );
+    if (window.confirm(`Are you sure you want to reset interactions for ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`)) {
+      const { error: interactionsError } = await supabase
+        .from("interactions")
+        .delete()
+        .or(`user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`);
 
-    if (interactionsError) {
-      console.error("Error deleting interactions:", interactionsError);
-      return;
+      if (interactionsError) {
+        console.error("Error deleting interactions:", interactionsError);
+        return;
+      }
+
+      const { error: matchesError } = await supabase
+        .from("matches")
+        .delete()
+        .or(`user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`);
+
+      if (matchesError) {
+        console.error("Error deleting matches:", matchesError);
+        return;
+      }
+
+      alert("Interactions and matches reset successfully.");
     }
-
-    const { error: matchesError } = await supabase
-      .from("matches")
-      .delete()
-      .or(
-        `user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`
-      );
-
-    if (matchesError) {
-      console.error("Error deleting matches:", matchesError);
-      return;
-    }
-
-    alert("Interactions and matches reset successfully.");
   };
 
   const resetAllInteractionsAndMatches = async () => {
-    const { error: interactionsError } = await supabase
-      .from("interactions")
-      .delete()
-      .gt("created_at", "1900-01-01"); // This effectively deletes all records
-    // This effectively deletes all records
+    if (window.confirm("Are you sure you want to reset all interactions and matches? This action cannot be undone.")) {
+      const { error: interactionsError } = await supabase
+        .from("interactions")
+        .delete()
+        .gt("created_at", "1900-01-01"); // This effectively deletes all records
 
-    if (interactionsError) {
-      console.error("Error deleting all interactions:", interactionsError);
-      return;
+      if (interactionsError) {
+        console.error("Error deleting all interactions:", interactionsError);
+        return;
+      }
+
+      const { error: matchesError } = await supabase
+        .from("matches")
+        .delete()
+        .gt("created_at", "1900-01-01"); // This effectively deletes all records
+
+      if (matchesError) {
+        console.error("Error deleting all matches:", matchesError);
+        return;
+      }
+
+      alert("All interactions and matches reset successfully.");
     }
-
-    const { error: matchesError } = await supabase
-      .from("matches")
-      .delete()
-      .gt("created_at", "1900-01-01"); // This effectively deletes all records
-
-    if (matchesError) {
-      console.error("Error deleting all matches:", matchesError);
-      return;
-    }
-
-    alert("All interactions and matches reset successfully.");
   };
 
   return (
@@ -171,20 +194,21 @@ const AdminScreen = () => {
                   Profile
                 </button>
               </div>
-              <div style={{ marginTop: "20px" }}>
-                <button
-                  onClick={deleteUserProfile}
-                  style={{ backgroundColor: "red", color: "white" }}
-                >
-                  DELETE USER PROFILE (WARNING)
-                </button>
-              </div>
+
               <div style={{ marginTop: "20px" }}>
                 <button
                   onClick={resetInteractions}
                   style={{ backgroundColor: "orange", color: "white" }}
                 >
                   RESET INTERACTIONS
+                </button>
+              </div>
+              <div style={{ marginTop: "20px" }}>
+                <button
+                  onClick={deleteUserProfile}
+                  style={{ backgroundColor: "red", color: "white" }}
+                >
+                  DELETE USER PROFILE (WARNING)
                 </button>
               </div>
             </>
@@ -195,6 +219,23 @@ const AdminScreen = () => {
               style={{ backgroundColor: "red", color: "white" }}
             >
               RESET ALL INTERACTIONS AND MATCHES (WARNING)
+            </button>
+          </div>
+          <br />
+          <br />
+
+          <div style={{ marginTop: "20px" }}>
+            <button
+              onClick={() => {
+                if (window.confirm("Are you sure you want to create a new user? This action will log you out.")) {
+                  localStorage.removeItem("userId");
+                  goto("settings");
+                  window.location.reload();
+                }
+              }}
+              style={{ backgroundColor: "green", color: "white" }}
+            >
+              Create New User
             </button>
           </div>
         </Content>

@@ -16,14 +16,28 @@ import AdminScreen from "./Screens/AdminScreen";
 // Create a context
 const RouterContext = createContext();
 
+function parseHash(hash) {
+  const [page, queryString] = hash.split("?");
+  const queryParams = new URLSearchParams(queryString);
+  return { page, queryParams };
+}
+
 function Router() {
-  const [currentPage, setCurrentPage] = useState(
-    window.location.hash.substr(1) || "map"
-  );
+  const [currentPage, setCurrentPage] = useState(() => {
+    const { page } = parseHash(window.location.hash.substr(1));
+    return page || "home";
+  });
+
+  const [queryParams, setQueryParams] = useState(() => {
+    const { queryParams } = parseHash(window.location.hash.substr(1));
+    return queryParams;
+  });
 
   useEffect(() => {
     const handleHashChange = () => {
-      setCurrentPage(window.location.hash.substr(1));
+      const { page, queryParams } = parseHash(window.location.hash.substr(1));
+      setCurrentPage(page);
+      setQueryParams(queryParams);
     };
 
     window.addEventListener("hashchange", handleHashChange);
@@ -34,10 +48,10 @@ function Router() {
   const isCurrentPage = (page) => currentPage === page;
 
   // Function to navigate to a different page
-  const goto = (page) => {
-    // scroll to top of the page
-
-    window.location.hash = page;
+  const goto = (page, params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const newHash = queryString ? `${page}?${queryString}` : page;
+    window.location.hash = newHash;
     window.scrollTo(0, 0);
   };
 
@@ -69,6 +83,7 @@ function Router() {
     currentPage,
     isCurrentPage,
     goto,
+    queryParams,
   };
 
   return (

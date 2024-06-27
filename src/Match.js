@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { Button } from "./Layout";
 import KissHeartAnimation from "./KissHeartAnimation";
 import { LYFT_PINK } from "./themes/colors";
+import Image from "./Image";
+import { useRouter } from "./Router";
 
 const MatchOverlayBack = styled.div`
   position: fixed;
@@ -72,23 +74,31 @@ const ButtonRow = styled.div`
   display: flex;
   gap: 16px;
 `;
-const Match = ({ onClose, onSendMsg }) => (
-  <>
-    <MatchOverlayBack>
-      <MatchOverlay>
-        <MatchOverlayPhoto>
-          <img src="/images/profile-photos/person1.png" alt="Matched profile" />
-        </MatchOverlayPhoto>
-        <MatchOverlayTitle>It's a Match!</MatchOverlayTitle>
-        <MatchOverlayText>You and Alex both liked each other.</MatchOverlayText>
-        <ButtonRow>
-          <Button onClick={onClose}>Keep Swiping</Button>
-          <Button onClick={onSendMsg}>Send Message</Button>
-        </ButtonRow>
-      </MatchOverlay>
-    </MatchOverlayBack>
-    <KissHeartAnimation start={true} />
-  </>
-);
+const Match = ({ profile, onClose, onSendMsg }) => {
+  const { goto } = useRouter();
+  console.log("match profile", profile);
+  return (
+    <>
+      <MatchOverlayBack>
+        <MatchOverlay>
+          <MatchOverlayPhoto
+            onClick={() => goto(`profile?user_id=${profile?.user_id}`)}
+          >
+            <Image src={profile?.photo_med} alt="Matched profile" />
+          </MatchOverlayPhoto>
+          <MatchOverlayTitle>It's a Match!</MatchOverlayTitle>
+          <MatchOverlayText>
+            You and {profile?.first_name} both liked each other.
+          </MatchOverlayText>
+          <ButtonRow>
+            <Button onClick={onClose}>Keep Swiping</Button>
+            <Button onClick={onSendMsg}>Send Message</Button>
+          </ButtonRow>
+        </MatchOverlay>
+      </MatchOverlayBack>
+      <KissHeartAnimation start={true} />
+    </>
+  );
+};
 
 export default Match;

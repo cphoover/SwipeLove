@@ -40,7 +40,9 @@ const RedirectUnregistered = ({ children }) => {
   // TODO local storage is not the way to do this...
 
   const notOnRegistrationPage =
-    !isCurrentPage("settings") && !isCurrentPage("update-photos");
+    !isCurrentPage("settings") &&
+    !isCurrentPage("update-photos") &&
+    !isCurrentPage("admin");
   const userIsNotRegistered = !myDetails?.registered;
 
   useEffect(() => {

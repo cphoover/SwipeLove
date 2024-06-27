@@ -6,27 +6,22 @@ import React from "react";
 // import { MapFiltersProvider } from "./Providers/MapFiltersProvider";
 // import { MyUserProvider } from "./Providers/MyUserProvider";
 // import { CompletionsProvider } from "./Providers/CompletionsProvider";
-import HomeScreen from "./Screens/HomeScreen";
-import ChatsScreen from "./Screens/ChatsScreen";
-import NotificationsScreen from "./Screens/NotificationsScreen";
-import UpdatePhotosScreen from "./Screens/UpdatePhotosScreen";
-import ProfileSettingsScreen from "./Screens/ProfileSettingsScreen";
-import ConversationScreen from "./Screens/ConversationScreen";
-import ProfileScreen from "./Screens/ProfileScreen";
 import Router from "./Router";
 import { MyUserProvider } from "./Providers/MyUserProvider";
 import { LoadingBarProvider } from "./Providers/LoadingBarProvider";
-import GlobalLoadingBar from "./LoadingBar";
 import { MyPhotosProvider } from "./Providers/MyPhotosProvider";
+import { MatchesProvider } from "./Providers/MatchesProvider";
 
 const AppWrapper = ({ children }) => {
   return (
     <LoadingBarProvider>
       <MyUserProvider>
         <MyUserProvider>
-          <MyPhotosProvider>
-            <Router />
-          </MyPhotosProvider>
+          <MatchesProvider>
+            <MyPhotosProvider>
+              <Router />
+            </MyPhotosProvider>
+          </MatchesProvider>
         </MyUserProvider>
       </MyUserProvider>
     </LoadingBarProvider>

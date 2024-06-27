@@ -28,8 +28,56 @@ import {
   SwipeArea,
   HiddenAdminButton,
 } from "./HomeScreen.styles";
-import { getResizedURL } from "../utils";
-import { useMatches } from "../Providers/MatchesProvider";
+
+
+const fetchUserProfile = async (user_id) => {
+  // Fetch user profile
+  const { data: userProfile, error: userProfileError } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("user_id", user_id)
+    .single();
+
+  if (userProfileError) {
+    console.error("Error fetching user profile:", userProfileError);
+    return null;
+  }
+
+  // Fetch main profile photo
+  const { data: mainPhoto, error: mainPhotoError } = await supabase
+    .from("main_photos")
+    .select("photo_id")
+    .eq("user_id", user_id)
+    .single();
+
+  if (mainPhotoError) {
+    console.error("Error fetching main photo:", mainPhotoError);
+    return userProfile; // Return profile without photo
+  }
+
+  // Fetch photo_med from profile_photos using photo_id
+  const { data: profilePhoto, error: profilePhotoError } = await supabase
+    .from("profile_photos")
+    .select("photo_med")
+    .eq("id", mainPhoto.photo_id)
+    .single();
+
+  if (profilePhotoError) {
+    console.error("Error fetching profile photo:", profilePhotoError);
+    return userProfile; // Return profile without photo
+  }
+
+  // Attach photo_med to user profile
+  return { ...userProfile, photo_med: profilePhoto.photo_med };
+};
+
+
+function getResizedURL(seedURL, { width, height }) {
+  const url = new URL(seedURL);
+  url.searchParams.set("width", width);
+  url.searchParams.set("height", height);
+  return url.toString();
+}
 
 const recordInteraction = async (user_id_to, interaction_type) => {
   const { error } = await supabase.from("interactions").insert([
@@ -46,22 +94,85 @@ const recordInteraction = async (user_id_to, interaction_type) => {
   }
 };
 
+const getLastQueryTime = () => {
+  return localStorage.getItem("lastQueryTime") || new Date().toISOString();
+};
+
+const setLastQueryTime = (time) => {
+  localStorage.setItem("lastQueryTime", time);
+};
+
 const HomeScreen = () => {
   // return false;
+  const [lastQueryTime, setLastQueryTimeState] = useState(getLastQueryTime());
+  const [matchesQueue, setMatchesQueue] = useState([]);
+  const [showMatch, setShowMatch] = useState(false);
+  const [currentMatchProfile, setCurrentMatchProfile] = useState(null);
 
-  // const [lastQueryTime, setLastQueryTimeState] = useState(getLastQueryTime());
-  // const [matchesQueue, setMatchesQueue] = useState([]);
-  // const [showMatch, setShowMatch] = useState(false);
-  // const [currentMatchProfile, setCurrentMatchProfile] = useState(null);
-
-
-  const { showMatch, currentMatchProfile, setShowMatch } = useMatches();
+  const updateLastQueryTime = (time) => {
+    setLastQueryTimeState(time);
+    setLastQueryTime(time);
+  };
 
   const { initializeLoadingBar, finishLoadingBar } = useLoadingBar();
   const [profiles, setProfiles] = useState([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentIndexRef = useRef(currentIndex);
+
+  const showNextMatch = () => {
+    if (matchesQueue.length > 0) {
+      const nextMatch = matchesQueue.shift();
+      setCurrentMatchProfile(nextMatch);
+      setShowMatch(true);
+    } else {
+      setShowMatch(false);
+    }
+  };
+
+  useEffect(() => {
+    if (matchesQueue.length > 0 && !showMatch) {
+      showNextMatch();
+    }
+  }, [matchesQueue, showMatch]);
+
+  const fetchRecentMatches = async () => {
+    const { data, error } = await supabase
+      .from("matches")
+      .select("*")
+      .or(`user_id_1.eq.${getUserId()},user_id_2.eq.${getUserId()}`)
+      .gt("created_at", lastQueryTime);
+
+    if (error) {
+      console.error("Error fetching recent matches:", error);
+    } else {
+      const profiles = await Promise.all(
+        data.map(async (match) => {
+          const otherUserId =
+            match.user_id_1 === getUserId() ? match.user_id_2 : match.user_id_1;
+
+          // remove duplicates
+          if (
+            !matchesQueue.some((profile) => profile.user_id === otherUserId)
+          ) {
+            const profile = await fetchUserProfile(otherUserId);
+            if (profile) {
+              return profile;
+            }
+          }
+          return null;
+        })
+      );
+
+      profiles.forEach((profile) => {
+        if (profile) {
+          setMatchesQueue((prevQueue) => [...prevQueue, profile]);
+        }
+      });
+
+      updateLastQueryTime(new Date().toISOString());
+    }
+  };
 
   // const fetchRecentMatches = async () => {
   //   const { data, error } = await supabase
@@ -90,6 +201,61 @@ const HomeScreen = () => {
   //     updateLastQueryTime(new Date().toISOString());
   //   }
   // };
+  useEffect(() => {
+    const channel = supabase
+      .channel("matches")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "matches",
+          // filter: `user_id_1=eq.${getUserId()} OR user_id_2=eq.${getUserId()}`,
+        },
+        (payload) => {
+          // filter on the client for now
+          if (
+            payload.new.user_id_1 === getUserId() ||
+            payload.new.user_id_2 === getUserId()
+          ) {
+            console.log("YAYYY New match:", payload.new);
+            handleNewMatch(payload.new);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []); // Empty dependency array to run only once
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchRecentMatches();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  const handleNewMatch = async (match) => {
+    const otherUserId =
+      match.user_id_1 === getUserId() ? match.user_id_2 : match.user_id_1;
+
+    if (!matchesQueue.some((profile) => profile.user_id === otherUserId)) {
+      const profile = await fetchUserProfile(otherUserId);
+
+      if (profile) {
+        setMatchesQueue((prevQueue) => [...prevQueue, profile]);
+      }
+    }
+  };
 
   const childRefs = useMemo(
     () =>
@@ -168,18 +334,15 @@ const HomeScreen = () => {
         <Content>
           {profilesLoaded && (
             <SwipeArea className="asdf">
-              <StyledTinderCard
-                className="swipe"
-                preventSwipe={["right", "left", "up", "down"]}
-              >
+              <StyledTinderCard className="swipe">
                 <ProfileCard>
                   <NoMoreProfilePhoto>
                     <Image src={"./images/SadRobot.svg"} alt="Profile photo" />
                   </NoMoreProfilePhoto>
                   <ProfileName>
-                    Sorry, you're all out of swipes
+                    Sorry you're all out of swipes
                     <br />
-                    😢
+                    :(&nbsp;
                     {/* <img src="/images/right-arrow.svg" alt="Right Arrow" /> */}
                   </ProfileName>
 
@@ -242,7 +405,7 @@ const HomeScreen = () => {
           onClose={() => setShowMatch(false)}
           onSendMsg={() => {
             setShowMatch(false);
-            goto(`conversation?user_id=${currentMatchProfile.user_id}`);
+            goto(`conversation?user_id=${currentMatchProfile.user_id}`); 
           }}
         />
       )}
