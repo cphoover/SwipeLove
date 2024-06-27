@@ -12,6 +12,7 @@ import ProfileSettingsScreen from "./Screens/ProfileSettingsScreen";
 import GlobalLoadingBar from "./LoadingBar";
 import { useLoadingBar } from "./Providers/LoadingBarProvider";
 import AdminScreen from "./Screens/AdminScreen";
+import { MatchWrapper } from "./MatchWrapper";
 
 // Create a context
 const RouterContext = createContext();
@@ -59,9 +60,17 @@ function Router() {
   const renderRoute = () => {
     switch (currentPage) {
       case "home":
-        return <HomeScreen />;
+        return (
+          <MatchWrapper>
+            <HomeScreen />
+          </MatchWrapper>
+        );
       case "chats":
-        return <ChatsScreen />;
+        return (
+          <MatchWrapper>
+            <ChatsScreen />
+          </MatchWrapper>
+        );
       case "admin":
         return <AdminScreen />;
       case "conversation":
@@ -71,7 +80,11 @@ function Router() {
       case "update-photos":
         return <UpdatePhotosScreen />;
       case "profile":
-        return <ProfileScreen />;
+        return (
+          <MatchWrapper>
+            <ProfileScreen />
+          </MatchWrapper>
+        );
       case "notifications":
         return <NotificationsScreen />;
       default:

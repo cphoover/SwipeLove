@@ -1,13 +1,24 @@
 import React, { useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 
+// const AnimationContainer = styled.div`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   pointer-events: none;
+//   z-index: 1000;
+// `;
+
 const AnimationContainer = styled.div`
-  position: absolute;
+  position: fixed; /* Changed from absolute to fixed */
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh; /* Ensure it does not exceed the viewport height */
   pointer-events: none;
+  overflow: hidden; /* Hide the overflow */
   z-index: 1000;
 `;
 

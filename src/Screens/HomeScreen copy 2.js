@@ -54,6 +54,9 @@ const HomeScreen = () => {
   // const [showMatch, setShowMatch] = useState(false);
   // const [currentMatchProfile, setCurrentMatchProfile] = useState(null);
 
+
+  const { showMatch, currentMatchProfile, setShowMatch } = useMatches();
+
   const { initializeLoadingBar, finishLoadingBar } = useLoadingBar();
   const [profiles, setProfiles] = useState([]);
   const [profilesLoaded, setProfilesLoaded] = useState(false);
@@ -233,6 +236,16 @@ const HomeScreen = () => {
         </Content>
       </Container>
       <BottomTabMenu />
+      {/* {showMatch && currentMatchProfile && (
+        <Match
+          profile={currentMatchProfile}
+          onClose={() => setShowMatch(false)}
+          onSendMsg={() => {
+            setShowMatch(false);
+            goto(`conversation?user_id=${currentMatchProfile.user_id}`);
+          }}
+        />
+      )} */}
     </>
   );
 };

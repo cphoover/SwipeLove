@@ -15,7 +15,7 @@ const MatchOverlayBack = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  /* z-index: 1000; */
 `;
 
 const MatchOverlay = styled.div`
@@ -74,16 +74,19 @@ const ButtonRow = styled.div`
   display: flex;
   gap: 16px;
 `;
-const Match = ({ profile, onClose, onSendMsg }) => {
-  const { goto } = useRouter();
-  console.log("match profile", profile);
+
+const HideOverflow = styled.div`
+  /* overflow: hidden; */
+  /* height: 100vh; */
+`;
+const Match = ({ profile, onClose, onSendMsg, onClickProfilePhoto }) => {
+  const { isCurrentPage } = useRouter();
+
   return (
     <>
       <MatchOverlayBack>
         <MatchOverlay>
-          <MatchOverlayPhoto
-            onClick={() => goto(`profile?user_id=${profile?.user_id}`)}
-          >
+          <MatchOverlayPhoto onClick={onClickProfilePhoto}>
             <Image src={profile?.photo_med} alt="Matched profile" />
           </MatchOverlayPhoto>
           <MatchOverlayTitle>It's a Match!</MatchOverlayTitle>
@@ -91,7 +94,9 @@ const Match = ({ profile, onClose, onSendMsg }) => {
             You and {profile?.first_name} both liked each other.
           </MatchOverlayText>
           <ButtonRow>
-            <Button onClick={onClose}>Keep Swiping</Button>
+            <Button onClick={onClose}>
+              {isCurrentPage("home") ? "Keep Swiping" : "Close"}
+            </Button>
             <Button onClick={onSendMsg}>Send Message</Button>
           </ButtonRow>
         </MatchOverlay>
