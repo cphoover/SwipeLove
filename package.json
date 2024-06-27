@@ -1,7 +1,7 @@
 {
   "name": "baltimore-food-drinks-map",
   "version": "0.1.0",
-  "homepage": "https://barcrawl.live/",
+  "homepage": "https://cphoover.github.io/SwipeLove",
   "private": true,
   "dependencies": {
     "@charkour/react-reactions": "^0.11.0",
@@ -41,7 +41,8 @@
   "scripts": {
     "predeploy": "npm run build",
     "start": "REACT_APP_HOMEPAGE=/ react-scripts start",
-    "deploy": "REACT_APP_HOMEPAGE=https://barcrawl.live/ npm run build && echo 'barcrawl.live' > ./build/CNAME && gh-pages -d build",
+    "deploy": "REACT_APP_HOMEPAGE=https://cphoover.github.io/SwipeLove npm run build && gh-pages -d build",
+    "olddeploy": "REACT_APP_HOMEPAGE=https://barcrawl.live npm run build && echo 'barcrawl.live' > ./build/CNAME && gh-pages -d build",
     "oldbuild": "react-scripts build && npm run sentry:sourcemaps",
     "build": "react-scripts build",
     "test": "react-scripts test",
