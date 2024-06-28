@@ -171,7 +171,10 @@ const HomeScreen = () => {
               >
                 <ProfileCard>
                   <NoMoreProfilePhoto>
-                    <Image src={"./images/SadRobot.svg"} alt="Profile photo" />
+                    <Image
+                      src={`${process.env.PUBLIC_URL}/images/SadRobot.svg`}
+                      alt="Profile photo"
+                    />
                   </NoMoreProfilePhoto>
                   <ProfileName>
                     Sorry, you're all out of swipes

@@ -23,7 +23,7 @@ const TabBarContainer = styled.div`
   background-color: #ffffff;
   border-top: 1px solid #e5e7eb;
   box-sizing: border-box;
-  transform: translateZ(0);
+  /* transform: translateZ(0); */
   /* z-index: 999; */
 `;
 

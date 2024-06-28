@@ -1,35 +1,49 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Match from "./Match";
 import { useMatches } from "./Providers/MatchesProvider";
 import { useRouter } from "./Router";
+import { set } from "lodash";
 
+let timeoutPtr;
 export const MatchWrapper = ({ children }) => {
   const { showMatch, currentMatchProfile, setShowMatch } = useMatches();
   const { goto } = useRouter();
 
-//   useEffect(() => {
-//     if (showMatch && currentMatchProfile) {
-//       [...document.querySelectorAll("html, body")].forEach((node) =>
+//   // stupid hack to prevent scrolling when match is shown
+//   useLayoutEffect(() => {
+//     if (showMatch) {
+//       if (timeoutPtr) {
+//         clearTimeout(timeoutPtr);
+//       }
+//       [...document.querySelectorAll("html,body")].forEach((node) =>
 //         node.classList.add("no-scroll")
 //       );
 //     } else {
-//       [...document.querySelectorAll("html, body")].forEach((node) =>
-//         node.classList.remove("no-scroll")
+//       timeoutPtr = setTimeout(
+//         () =>
+//           [...document.querySelectorAll("html,body")].forEach((node) =>
+//             node.classList.remove("no-scroll")
+//           ),
+//         2000
 //       );
 //     }
 
 //     return () => {
-//       [...document.querySelectorAll("html, body")].forEach((node) =>
-//         node.classList.remove("no-scroll")
+//       timeoutPtr = setTimeout(
+//         () =>
+//           [...document.querySelectorAll("html,body")].forEach((node) =>
+//             node.classList.remove("no-scroll")
+//           ),
+//         500
 //       );
 //     };
-//   }, [showMatch, currentMatchProfile]);
+//   }, [showMatch]);
 
   return (
     <>
       {children}
       {showMatch && currentMatchProfile && (
-        
+        <>
           <Match
             profile={currentMatchProfile}
             onClose={() => setShowMatch(false)}
@@ -42,7 +56,7 @@ export const MatchWrapper = ({ children }) => {
               goto(`conversation?user_id=${currentMatchProfile.user_id}`);
             }}
           />
-      
+        </>
       )}
     </>
   );

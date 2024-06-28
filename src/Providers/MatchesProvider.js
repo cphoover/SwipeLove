@@ -112,8 +112,10 @@ export const MatchesProvider = ({ children }) => {
       return;
     }
 
+    /// @TODO hmmm this should really happen when we show the match...
+    // not when we process the match...
     setLatestMatchEpoch(latestTime);
-    
+
     const profilePromiseArray = filteredMatches.map(async (match) => {
       const otherUserId =
         match.user_id_1 === getUserId() ? match.user_id_2 : match.user_id_1;

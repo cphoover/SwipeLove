@@ -102,49 +102,49 @@ const ChatsScreen = () => {
           <SearchInput type="search" placeholder="Search..." />
           <ChatsList>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person1.png" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person1.png`} />
               <ChatDetails>
                 <ChatName>Jane Doe</ChatName>
                 <ChatText>Hey, how are you?</ChatText>
               </ChatDetails>
             </ChatListItem>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person4.jpeg" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person4.jpeg`} />
               <ChatDetails>
                 <ChatName>Heather Braxton</ChatName>
                 <ChatText>Hey, how are you?</ChatText>
               </ChatDetails>
             </ChatListItem>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person3.jpeg" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person3.jpeg`} />
               <ChatDetails>
                 <ChatName>April Smith</ChatName>
                 <ChatText>Can I get your numbah?</ChatText>
               </ChatDetails>
             </ChatListItem>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person2.jpeg" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person2.jpeg`} />
               <ChatDetails>
                 <ChatName>Kami Kline</ChatName>
                 <ChatText>so... how was your day today?</ChatText>
               </ChatDetails>
             </ChatListItem>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person5.jpeg" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person5.jpeg`} />
               <ChatDetails>
                 <ChatName>Silvia Ortega</ChatName>
                 <ChatText>Are you going to that concert this weekend?</ChatText>
               </ChatDetails>
             </ChatListItem>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person6.jpeg" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person6.jpeg`} />
               <ChatDetails>
                 <ChatName>Margeret Greene</ChatName>
                 <ChatText>I absolutely love your Barcelona photos!</ChatText>
               </ChatDetails>
             </ChatListItem>
             <ChatListItem onClick={() => goto("conversation")}>
-              <PersonAvatar photoUrl="/images/profile-photos/person7.jpeg" />
+              <PersonAvatar photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person7.jpeg`} />
               <ChatDetails>
                 <ChatName>Kami Kline</ChatName>
                 <ChatText>so... how was your day today?</ChatText>

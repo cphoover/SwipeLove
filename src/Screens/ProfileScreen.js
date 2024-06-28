@@ -137,10 +137,7 @@ const JustifiedText = styled.div`
 
 const ProfileScreen = () => {
   const [isViewerOpen, setIsViewerOpen] = React.useState(false);
-  const { 
-    initializeLoadingBar,
-    finishLoadingBar
-  } = useLoadingBar();
+  const { initializeLoadingBar, finishLoadingBar } = useLoadingBar();
   const [profileData, setProfileData] = useState(null);
   const [profilePhotos, setProfilePhotos] = useState([]);
   const { queryParams, goto } = useRouter();
@@ -150,7 +147,7 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      initializeLoadingBar('fetchingProfileData-profileScreen');
+      initializeLoadingBar("fetchingProfileData-profileScreen");
       try {
         // Fetch user profile data
         let { data: userProfile, error: userProfileError } = await supabase
@@ -195,7 +192,7 @@ const ProfileScreen = () => {
       } catch (error) {
         console.error("Failed to fetch profile data", error);
       }
-      finishLoadingBar('fetchingProfileData-profileScreen');
+      finishLoadingBar("fetchingProfileData-profileScreen");
     };
 
     if (userId) {
@@ -248,8 +245,9 @@ const ProfileScreen = () => {
             </ProfileText>
             <ProfileText>
               {/* random distance between 1 and 20 miles for now */}
-              {randomDistance} miles away
-
+              {["sofia", "alex"].includes(profileData?.first_name?.toLowerCase())
+                ? "Less than a mile away"
+                : `${randomDistance} miles away`}
             </ProfileText>
           </JustifiedText>
 

@@ -141,7 +141,7 @@ const ProfileSettingsScreen = () => {
         <Content>
           <UpdatePhotoWrapper>
             <ProfilePhotoWrapper>
-              <img src="/images/profile-photos/person1.png" alt="Profile" />
+              <img src="./images/profile-photos/person1.png" alt="Profile" />
             </ProfilePhotoWrapper>
             <Button
               onClick={() => {

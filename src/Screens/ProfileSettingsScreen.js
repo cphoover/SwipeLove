@@ -249,7 +249,7 @@ const ProfileSettingsScreen = () => {
               <Image
                 src={
                   mainPhoto?.photo_med ||
-                  "/images/profile-photos/defaultavatar.jpeg"
+                  `${process.env.PUBLIC_URL}/images/profile-photos/defaultavatar.jpeg`
                 }
                 alt="Profile"
               />
@@ -431,11 +431,7 @@ const ProfileSettingsScreen = () => {
                             outline: "none",
                             background: getTrackBackground({
                               values: agePreferenceValues,
-                              colors: [
-                                "#E6E6E6",
-                                LYFT_PINK,
-                                "#E6E6E6",
-                              ],
+                              colors: ["#E6E6E6", LYFT_PINK, "#E6E6E6"],
                               min: 18,
                               max: 70,
                             }),
@@ -458,7 +454,6 @@ const ProfileSettingsScreen = () => {
                           borderRadius: "50%",
                           backgroundColor: "transparent",
                         }}
-
                       >
                         <div
                           style={{

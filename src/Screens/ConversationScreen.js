@@ -4,6 +4,16 @@ import { Button, Container, Content } from "../Layout";
 import MainHeader from "../MainHeader";
 import BottomTabMenu from "../BottomTabMenu";
 import { LYFT_PINK } from "../themes/colors";
+import { ChatProvider, useChat } from "../Providers/ChatProvider";
+import { useRouter } from "../Router";
+import { getUserId } from "../utils";
+import { useMyPhotos } from "../Providers/MyPhotosProvider";
+import { supabase } from "../db";
+import Image from "../Image";
+import {
+  OtherUsersProfileProvider,
+  useOtherUsersProfile,
+} from "../Providers/OtherUsersProfileProvider";
 
 const ChatWrapper = styled.div`
   display: flex;
@@ -83,52 +93,102 @@ const SendButton = styled(Button)`
   margin-left: 12px;
 `;
 
-const ConversationScreen = () => {
+const ConversationScreenUnwrapped = () => {
   const textareaRef = useRef(null);
   const messageListRef = useRef(null);
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Hi there!", user: "other" },
-    { id: 2, text: "Hello!", user: "self" },
-    { id: 3, text: "How are you?", user: "other" },
-    { id: 4, text: "I'm good, thanks! How about you?", user: "self" },
-    /** slightly longer message */
-    {
-      id: 5,
-      text: "I'm doing great! I just finished my React Native project and I'm excited to show it to you. Can we meet tomorrow?",
-    },
-    {
-      id: 6,
-      text: "Sure! I'd love to see it. Let's meet at the coffee shop near your place",
-    },
-    {
-      id: 7,
-      text: "Sounds good! See you there!",
-    },
-    {
-      id: 8,
-      text: "Bye!",
-    },
-    {
-      id: 9,
-      text: "Bye!",
-    },
-    {
-      id: 10,
-      text: "Bye!",
-    },
-    {
-      id: 11,
-      text: "hmm I forgot to tell you that I have a meeting tomorrow",
-    },
-  ]);
+  const { mainPhoto } = useMyPhotos();
+  const [otherUserProfile, setOtherUserProfile] = useState(null); // State to hold other user's profile data
+
+  const { queryParams } = useRouter();
+  const otherUserId = queryParams.get("user_id");
+
+  /** @TODO move this to a provider... and deduplicate the fetching of user profiles across the app... */
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // Fetch user profile data including main profile photo URL
+        const { data: userProfile, error } = await supabase
+          .from("user_profiles")
+          .select("first_name, last_name")
+          .eq("user_id", otherUserId)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        // Fetch main profile photo data by joining main_photos to profile_photos
+        const { data: profilePhoto, error: photoError } = await supabase
+          .from("main_photos")
+          .select("profile_photos(photo_small)")
+          .eq("user_id", otherUserId)
+          .single();
+
+        if (photoError) {
+          throw photoError;
+        }
+
+        // Extract photo_small URL from profile_photos
+        const photoSmallUrl = profilePhoto.profile_photos.photo_small;
+
+        // Combine fetched data
+        const combinedData = {
+          ...userProfile,
+          photo_small: photoSmallUrl,
+        };
+
+        setOtherUserProfile(combinedData);
+      } catch (error) {
+        console.error("Error fetching other user profile:", error.message);
+      }
+    };
+
+    if (otherUserId) {
+      fetchUserProfile();
+    }
+  }, [otherUserId]);
+
+  const { messages, sendMessage, greatestMessageId } = useChat();
+  // const [messages, setMessages] = useState([
+  //   { id: 1, text: "Hi there!", user: "other" },
+  //   { id: 2, text: "Hello!", user: "self" },
+  //   { id: 3, text: "How are you?", user: "other" },
+  //   { id: 4, text: "I'm good, thanks! How about you?", user: "self" },
+  //   /** slightly longer message */
+  //   {
+  //     id: 5,
+  //     text: "I'm doing great! I just finished my React Native project and I'm excited to show it to you. Can we meet tomorrow?",
+  //   },
+  //   {
+  //     id: 6,
+  //     text: "Sure! I'd love to see it. Let's meet at the coffee shop near your place",
+  //   },
+  //   {
+  //     id: 7,
+  //     text: "Sounds good! See you there!",
+  //   },
+  //   {
+  //     id: 8,
+  //     text: "Bye!",
+  //   },
+  //   {
+  //     id: 9,
+  //     text: "Bye!",
+  //   },
+  //   {
+  //     id: 10,
+  //     text: "Bye!",
+  //   },
+  //   {
+  //     id: 11,
+  //     text: "hmm I forgot to tell you that I have a meeting tomorrow",
+  //   },
+  // ]);
   const [newMessage, setNewMessage] = useState("");
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      setMessages([
-        ...messages,
-        { id: messages.length + 1, text: newMessage, user: "self" },
-      ]);
+      sendMessage(newMessage);
       setNewMessage("");
       resetTextAreaSize();
     }
@@ -153,47 +213,58 @@ const ConversationScreen = () => {
   };
 
   const scrollToBottom = () => {
-    window.scrollTo({
+    document.body.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
-  };    
+  };
 
+  const isSelf = (message) => message.author_id === getUserId();
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  if (!otherUserProfile) {
+    return <></>;
+  }
+
   return (
     <>
       <Container>
-        <MainHeader title="Chat" back />
+        <MainHeader
+          title={`${otherUserProfile.first_name} ${otherUserProfile.last_name}
+        `}
+          back
+        />
         <Content>
           <ChatWrapper>
+            {/* <strong>Greatest Message ID: {greatestMessageId}</strong>
+            <pre>
+              <code>{JSON.stringify(otherUserProfile, null, 4)}</code>{" "}
+            </pre> */}
             <MessageList ref={messageListRef}>
               {messages.map((message) => (
                 <Message
                   key={message.id}
-                  as={message.user === "self" ? UserMessage : Message}
+                  as={isSelf(message) ? UserMessage : Message}
                 >
-                  {message.user !== "self" && (
+                  {!isSelf(message) && (
                     <Avatar>
                       <img
-                        src="/images/profile-photos/person2.jpeg"
+                        src={otherUserProfile.photo_small}
                         alt="Avatar"
                       />
                     </Avatar>
                   )}
                   &nbsp;
-                  <Bubble isUser={message.user === "self"}>
-                    {message.text}
+                  <Bubble isUser={isSelf(message)}>
+                    {/* <strong>{message.id}</strong> */}
+                    {message.content}
                   </Bubble>
                   &nbsp;
-                  {message.user === "self" && (
+                  {isSelf(message) && (
                     <Avatar>
-                      <img
-                        src="/images/profile-photos/person3.jpeg"
-                        alt="Avatar"
-                      />
+                      <img src={mainPhoto.photo_small} alt="Avatar" />
                     </Avatar>
                   )}
                 </Message>
@@ -217,4 +288,14 @@ const ConversationScreen = () => {
   );
 };
 
+const ConversationScreen = () => {
+  const { queryParams } = useRouter();
+  const otherUserId = queryParams.get("user_id");
+
+  return (
+    <ChatProvider otherUserId={otherUserId}>
+      <ConversationScreenUnwrapped />
+    </ChatProvider>
+  );
+};
 export default ConversationScreen;
