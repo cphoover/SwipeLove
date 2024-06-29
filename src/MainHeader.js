@@ -39,13 +39,13 @@ const UnreadCount = styled.div`
   font-family: "Montserrat";
 `;
 
-const MainHeader = ({ title = "barcrawl", back }) => {
+const MainHeader = ({ title = "barcrawl", back, onClick }) => {
   const { isCurrentPage, goto } = useRouter();
   // const { unreadCountValue } = useCompletions();
 
   return (
     <AppHeader
-      title={title}
+      title={<div {...{ onClick }}>{title}</div>}
       leftIcon={
         <MenuButton
           // isActive={isCurrentPage("settings")}

@@ -5,45 +5,8 @@ import MainHeader from "../MainHeader";
 import BottomTabMenu from "../BottomTabMenu";
 import PersonAvatar from "../PersonAvatar";
 import { useRouter } from "../Router";
+import { useMatches } from "../Providers/MatchesProvider";
 
-const NotificationsList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const NotificationLine = styled.li`
-  & svg {
-    vertical-align: middle;
-    margin-right: 10px;
-    position: relative;
-    top: -2px;
-  }
-  color: #121212;
-  font-size: 14px;
-  font-family: "Montserrat";
-  font-weight: 500;
-  // height: 48px;
-
-  background-color: #ffffff;
-  padding: 16px;
-  margin-bottom: 14px;
-  border-radius: 24px;
-  box-shadow: 0px 2px 10px rgba(3, 3, 3, 0.1);
-  &.active {
-    background-color: black;
-    color: white;
-    box-shadow: none;
-    & svg {
-      fill: white;
-    }
-  }
-`;
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-`;
 
 const SearchInput = styled.input`
   width: 100%;
@@ -94,8 +57,11 @@ const ChatText = styled.div`
 
 const ChatsScreen = () => {
   const { goto } = useRouter();
+  const res = useMatches();
+  console.log('### res', res)
   return (
     <>
+    
       <Container>
         <MainHeader title="Chats" />
         <Content>

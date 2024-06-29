@@ -99,7 +99,7 @@ const ConversationScreenUnwrapped = () => {
   const { mainPhoto } = useMyPhotos();
   const [otherUserProfile, setOtherUserProfile] = useState(null); // State to hold other user's profile data
 
-  const { queryParams } = useRouter();
+  const { queryParams, goto } = useRouter();
   const otherUserId = queryParams.get("user_id");
 
   /** @TODO move this to a provider... and deduplicate the fetching of user profiles across the app... */
@@ -232,6 +232,9 @@ const ConversationScreenUnwrapped = () => {
     <>
       <Container>
         <MainHeader
+          onClick={() => {
+            goto(`profile?user_id=${otherUserId}`);
+          }}
           title={`${otherUserProfile.first_name} ${otherUserProfile.last_name}
         `}
           back
@@ -253,6 +256,9 @@ const ConversationScreenUnwrapped = () => {
                       <img
                         src={otherUserProfile.photo_small}
                         alt="Avatar"
+                        onClick={() => {
+                          goto(`profile?user_id=${otherUserId}`);
+                        }}
                       />
                     </Avatar>
                   )}

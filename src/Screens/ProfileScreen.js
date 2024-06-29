@@ -223,7 +223,7 @@ const ProfileScreen = () => {
           </ProfilePhoto>
           <BackButton
             onClick={() => {
-              goto("home");
+              window.history.back();
             }}
           >
             <BackIcon />
