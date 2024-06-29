@@ -75,11 +75,17 @@ const AdminScreen = () => {
   };
 
   const deleteUserProfile = async () => {
-    if (window.confirm(`Are you sure you want to delete the profile of ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the profile of ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`
+      )
+    ) {
       const { error: interactionsError } = await supabase
         .from("interactions")
         .delete()
-        .or(`user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`);
+        .or(
+          `user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`
+        );
 
       if (interactionsError) {
         console.error("Error deleting interactions:", interactionsError);
@@ -89,7 +95,9 @@ const AdminScreen = () => {
       const { error: matchesError } = await supabase
         .from("matches")
         .delete()
-        .or(`user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`);
+        .or(
+          `user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`
+        );
 
       if (matchesError) {
         console.error("Error deleting matches:", matchesError);
@@ -111,12 +119,62 @@ const AdminScreen = () => {
     }
   };
 
+  const deleteUserMessages = async () => {
+    if (
+      selectedUser &&
+      window.confirm(
+        `Are you sure you want to delete all messages for ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`
+      )
+    ) {
+      const { error } = await supabase
+        .from("messages")
+        .delete()
+        .eq("author_id", selectedUser.user_id);
+
+      const { error2 } = await supabase
+        .from("messages")
+        .delete()
+        .eq("recipient_id", selectedUser.user_id);
+
+      if (error || error2) {
+        console.error("Error deleting user messages:", error, error2);
+      } else {
+        alert("User messages deleted successfully.");
+      }
+    }
+  };
+
+  const deleteAllUserMessages = async () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete all messages for all users? This action cannot be undone."
+      )
+    ) {
+      const { error } = await supabase
+        .from("messages")
+        .delete()
+        .gt("created_at", "1900-01-01");
+
+      if (error) {
+        console.error("Error deleting all messages:", error);
+      } else {
+        alert("All user messages deleted successfully.");
+      }
+    }
+  };
+
   const resetInteractions = async () => {
-    if (window.confirm(`Are you sure you want to reset interactions for ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to reset interactions for ${selectedUser.first_name} ${selectedUser.last_name}? This action cannot be undone.`
+      )
+    ) {
       const { error: interactionsError } = await supabase
         .from("interactions")
         .delete()
-        .or(`user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`);
+        .or(
+          `user_id_from.eq.${selectedUser.user_id},user_id_to.eq.${selectedUser.user_id}`
+        );
 
       if (interactionsError) {
         console.error("Error deleting interactions:", interactionsError);
@@ -126,7 +184,9 @@ const AdminScreen = () => {
       const { error: matchesError } = await supabase
         .from("matches")
         .delete()
-        .or(`user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`);
+        .or(
+          `user_id_1.eq.${selectedUser.user_id},user_id_2.eq.${selectedUser.user_id}`
+        );
 
       if (matchesError) {
         console.error("Error deleting matches:", matchesError);
@@ -138,7 +198,11 @@ const AdminScreen = () => {
   };
 
   const resetAllInteractionsAndMatches = async () => {
-    if (window.confirm("Are you sure you want to reset all interactions and matches? This action cannot be undone.")) {
+    if (
+      window.confirm(
+        "Are you sure you want to reset all interactions and matches? This action cannot be undone."
+      )
+    ) {
       const { error: interactionsError } = await supabase
         .from("interactions")
         .delete()
@@ -211,6 +275,15 @@ const AdminScreen = () => {
                   DELETE USER PROFILE (WARNING)
                 </button>
               </div>
+
+              <div style={{ marginTop: "20px" }}>
+            <button
+              onClick={deleteUserMessages}
+              style={{ backgroundColor: "red", color: "white" }}
+            >
+              DELETE USER MESSAGES
+            </button>
+          </div>
             </>
           )}
           <div style={{ marginTop: "20px" }}>
@@ -224,10 +297,25 @@ const AdminScreen = () => {
           <br />
           <br />
 
+        
+
+          <div style={{ marginTop: "20px" }}>
+            <button
+              onClick={deleteAllUserMessages}
+              style={{ backgroundColor: "red", color: "white" }}
+            >
+              DELETE ALL USER MESSAGES
+            </button>
+          </div>
+
           <div style={{ marginTop: "20px" }}>
             <button
               onClick={() => {
-                if (window.confirm("Are you sure you want to create a new user? This action will log you out.")) {
+                if (
+                  window.confirm(
+                    "Are you sure you want to create a new user? This action will log you out."
+                  )
+                ) {
                   localStorage.removeItem("userId");
                   goto("settings");
                   window.location.reload();
