@@ -218,6 +218,11 @@ const ConversationScreenUnwrapped = () => {
   };
 
   const scrollToBottom = () => {
+    document.documentElement.scrollTo({
+      left: 0,
+      top:  document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
     document.body.scrollTo({
       left: 0,
       top: document.body.scrollHeight,
@@ -228,10 +233,12 @@ const ConversationScreenUnwrapped = () => {
   const isSelf = (message) => message.author_id === getUserId();
 
   useEffect(() => {
-    scrollToBottom();
+    setTimeout(scrollToBottom, 500);
   }, []);
 
   useEffect(() => {
+   
+    setTimeout(scrollToBottom, 100);
     scrollToBottom();
   }, [messages]);
 
