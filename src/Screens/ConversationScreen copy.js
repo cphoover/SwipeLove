@@ -153,7 +153,7 @@ const ConversationScreenUnwrapped = () => {
     }
   }, [otherUserId]);
 
-  const { messages, sendMessage, deleteMessage, greatestMessageId } = useChat();
+  const { messages, sendMessage, greatestMessageId } = useChat();
   // const [messages, setMessages] = useState([
   //   { id: 1, text: "Hi there!", user: "other" },
   //   { id: 2, text: "Hello!", user: "self" },
@@ -219,18 +219,12 @@ const ConversationScreenUnwrapped = () => {
 
   const scrollToBottom = () => {
     document.body.scrollTo({
-      left: 0,
-      top: document.body.scrollHeight,
+      top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
   };
 
   const isSelf = (message) => message.author_id === getUserId();
-
-  useEffect(() => {
-    scrollToBottom();
-  }, []);
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -243,7 +237,8 @@ const ConversationScreenUnwrapped = () => {
     // Show context menu on double-tap
     showContextMenu({
       event,
-      props: { key: "value", messageId },
+
+      props: { messageId },
     });
   };
 
@@ -270,43 +265,37 @@ const ConversationScreenUnwrapped = () => {
             </pre> */}
             <MessageList ref={messageListRef}>
               {messages.map((message) => (
-                <>
-                  {" "}
-                  {message.visible && (
-                    <Message
-                      key={message.id}
-                      as={isSelf(message) ? UserMessage : Message}
-                    >
-                      {!isSelf(message) && (
-                        <Avatar>
-                          <Image
-                            src={otherUserProfile.photo_small}
-                            alt="Avatar"
-                            nonBlocking
-                            onClick={() => {
-                              goto(`profile?user_id=${otherUserId}`);
-                            }}
-                          />
-                        </Avatar>
-                      )}
-                      &nbsp;
-                      <Bubble
-                        onClick={mkHandleMessageDoubleClick(message.id)}
-                        isUser={isSelf(message)}
-                      >
-                        {/* <strong>{message.id}</strong> */}
-                        {/* {JSON.stringify(message, null, 4)} */}
-                        {message.content}
-                      </Bubble>
-                      &nbsp;
-                      {isSelf(message) && (
-                        <Avatar>
-                          <img src={mainPhoto.photo_small} alt="Avatar" />
-                        </Avatar>
-                      )}
-                    </Message>
+                <Message
+                  key={message.id}
+                  as={isSelf(message) ? UserMessage : Message}
+                >
+                  {!isSelf(message) && (
+                    <Avatar>
+                      <Image
+                        src={otherUserProfile.photo_small}
+                        alt="Avatar"
+                        nonBlocking
+                        onClick={() => {
+                          goto(`profile?user_id=${otherUserId}`);
+                        }}
+                      />
+                    </Avatar>
                   )}
-                </>
+                  &nbsp;
+                  <Bubble
+                    onClick={mkHandleMessageDoubleClick(message.id)}
+                    isUser={isSelf(message)}
+                  >
+                    {/* <strong>{message.id}</strong> */}
+                    {message.content}
+                  </Bubble>
+                  &nbsp;
+                  {isSelf(message) && (
+                    <Avatar>
+                      <img src={mainPhoto.photo_small} alt="Avatar" />
+                    </Avatar>
+                  )}
+                </Message>
               ))}
             </MessageList>
           </ChatWrapper>
@@ -324,19 +313,11 @@ const ConversationScreenUnwrapped = () => {
       </InputWrapper>
       <BottomTabMenu />
       <Menu id={MESSAGE_MENU_ID}>
-        <Item onClick={(props) => void props.messageId}>Edit Message</Item>
-        <Item
-          onClick={({ props }) => {
-            deleteMessage(props?.messageId);
-          }}
-        >
-          <span
-            style={{
-              color: "red",
-            }}
-          >
-            Delete Message
-          </span>
+        <Item onClick={(event, props) => void props.messageId}>
+          Edit Message
+        </Item>
+        <Item onClick={(event, props) => void props.messageId}>
+          Delete Message
         </Item>
       </Menu>
     </>

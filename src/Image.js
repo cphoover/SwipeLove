@@ -23,12 +23,12 @@ const Skeleton = styled.div`
 
 const IMAGE_LOAD_TIMEOUT = 5000;
 
-const Image = ({ src, alt, primary, ...props }) => {
+const Image = ({ src, alt, primary, nonBlocking, ...props }) => {
   const { initializeLoadingBar, finishLoadingBar } = useLoadingBar();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (src) {
+    if (src && !nonBlocking) {
       initializeLoadingBar(`imageLoad-${src}`);
     }
 

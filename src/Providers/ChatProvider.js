@@ -87,6 +87,20 @@ export const ChatProvider = ({ otherUserId, children }) => {
     };
   }, []);
 
+  const deleteMessage = useCallback(
+    async (messageId) => {
+      // we will update the message to visible: false
+      const { data, error } = await supabase
+        .from("messages")
+        .update({ visible: false })
+        .eq("id", messageId);
+
+      if (error) {
+        console.error("Error deleting message:", error);
+      }
+    }
+  );
+
   const sendMessage = useCallback(
     async (content) => {
       const tempID = greatestMessageId + 1;
@@ -161,6 +175,7 @@ export const ChatProvider = ({ otherUserId, children }) => {
       value={{
         messages,
         sendMessage,
+        deleteMessage,
         greatestMessageId,
       }}
     >
