@@ -6,8 +6,6 @@ import BottomTabMenu from "../BottomTabMenu";
 import PersonAvatar from "../PersonAvatar";
 import RightArrowIcon from "../icons/right-arrow";
 
-
-
 const NotificationsList = styled.ul`
   list-style-type: none;
   padding: 0;
@@ -57,7 +55,7 @@ const NotificationsScreen = () => {
             <NotificationListItem>
               <PersonAvatar
                 small
-                photoUrl="/images/profile-photos/person1.png"
+                photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person1.png`}
               />
               <NotificationDetails>
                 <NotificationMsg>Sarah matched with you</NotificationMsg>
@@ -70,7 +68,7 @@ const NotificationsScreen = () => {
             <NotificationListItem>
               <PersonAvatar
                 small
-                photoUrl="/images/profile-photos/person4.jpeg"
+                photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person4.jpeg`}
               />
               <NotificationDetails>
                 <NotificationMsg>Alex messaged you!</NotificationMsg>
@@ -83,7 +81,7 @@ const NotificationsScreen = () => {
             <NotificationListItem>
               <PersonAvatar
                 small
-                photoUrl="/images/profile-photos/person3.jpeg"
+                photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person3.jpeg`}
               />
               <NotificationDetails>
                 <NotificationMsg>Jen matched with you</NotificationMsg>
@@ -96,7 +94,7 @@ const NotificationsScreen = () => {
             <NotificationListItem>
               <PersonAvatar
                 small
-                photoUrl="/images/profile-photos/person2.jpeg"
+                photoUrl={`${process.env.PUBLIC_URL}/images/profile-photos/person2.jpeg`}
               />
               <NotificationDetails>
                 <NotificationMsg>April Matched with you</NotificationMsg>
