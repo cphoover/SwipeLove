@@ -10,6 +10,7 @@ import ProfileScreen from "./Screens/ProfileScreen";
 import UpdatePhotosScreen from "./Screens/UpdatePhotosScreen";
 import ProfileSettingsScreen from "./Screens/ProfileSettingsScreen";
 import GlobalLoadingBar from "./LoadingBar";
+import AuthScreen from "./Screens/AuthScreen";
 import { useLoadingBar } from "./Providers/LoadingBarProvider";
 import AdminScreen from "./Screens/AdminScreen";
 import { MatchWrapper } from "./MatchWrapper";
@@ -62,7 +63,8 @@ function Router() {
       case "home":
         return (
           <MatchWrapper>
-            <HomeScreen />
+            <AuthScreen />
+            {/* <HomeScreen /> */}
           </MatchWrapper>
         );
       case "chats":
@@ -88,7 +90,7 @@ function Router() {
       case "notifications":
         return <NotificationsScreen />;
       default:
-        return <HomeScreen />; // Default route or add a NotFound screen if preferred
+        return <AuthScreen />; // Default route or add a NotFound screen if preferred
     }
   };
 

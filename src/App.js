@@ -11,19 +11,22 @@ import { MyUserProvider } from "./Providers/MyUserProvider";
 import { LoadingBarProvider } from "./Providers/LoadingBarProvider";
 import { MyPhotosProvider } from "./Providers/MyPhotosProvider";
 import { MatchesProvider } from "./Providers/MatchesProvider";
+import { AuthProvider } from "./Providers/AuthProvider";
 
 const AppWrapper = ({ children }) => {
   return (
     <LoadingBarProvider>
-      <MyUserProvider>
+      <AuthProvider>
         <MyUserProvider>
-          <MatchesProvider>
-            <MyPhotosProvider>
-              <Router />
-            </MyPhotosProvider>
-          </MatchesProvider>
+          <MyUserProvider>
+            <MatchesProvider>
+              <MyPhotosProvider>
+                <Router />
+              </MyPhotosProvider>
+            </MatchesProvider>
+          </MyUserProvider>
         </MyUserProvider>
-      </MyUserProvider>
+      </AuthProvider>
     </LoadingBarProvider>
   );
   // return <ProfileScreen />;
