@@ -16,7 +16,6 @@ import { AuthProvider } from "./Providers/AuthProvider";
 const AppWrapper = ({ children }) => {
   return (
     <LoadingBarProvider>
-      <AuthProvider>
         <MyUserProvider>
           <MyUserProvider>
             <MatchesProvider>
@@ -26,7 +25,6 @@ const AppWrapper = ({ children }) => {
             </MatchesProvider>
           </MyUserProvider>
         </MyUserProvider>
-      </AuthProvider>
     </LoadingBarProvider>
   );
   // return <ProfileScreen />;

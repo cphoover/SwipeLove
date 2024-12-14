@@ -14,6 +14,8 @@ import AuthScreen from "./Screens/AuthScreen";
 import { useLoadingBar } from "./Providers/LoadingBarProvider";
 import AdminScreen from "./Screens/AdminScreen";
 import { MatchWrapper } from "./MatchWrapper";
+import OTPScreen from "./Screens/OTPScreen";
+import { AuthProvider } from "./Providers/AuthProvider";
 
 // Create a context
 const RouterContext = createContext();
@@ -63,8 +65,8 @@ function Router() {
       case "home":
         return (
           <MatchWrapper>
-            <AuthScreen />
-            {/* <HomeScreen /> */}
+            {/* <AuthScreen /> */}
+            <HomeScreen />
           </MatchWrapper>
         );
       case "chats":
@@ -81,6 +83,10 @@ function Router() {
         return <ProfileSettingsScreen />;
       case "update-photos":
         return <UpdatePhotosScreen />;
+      case "auth":
+        return <AuthScreen />;
+      case "otp":
+        return <OTPScreen />;
       case "profile":
         return (
           <MatchWrapper>
@@ -103,7 +109,9 @@ function Router() {
 
   return (
     <RouterContext.Provider value={contextValue}>
-      <RedirectUnregistered>{renderRoute()}</RedirectUnregistered>
+      <RedirectUnregistered>
+        <AuthProvider>{renderRoute()}</AuthProvider>
+      </RedirectUnregistered>
 
       <GlobalLoadingBar />
       {/* {renderRoute()} */}
